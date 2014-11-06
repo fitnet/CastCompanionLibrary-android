@@ -343,12 +343,6 @@ public class VideoCastNotificationService extends Service {
     private void buildForLollipopAndAbove(MediaInfo info, Bitmap bitmap, boolean isPlaying)
             throws CastException, TransientNetworkDisconnectionException, NoConnectionException {
 
-        // Playback PendingIntent
-        Intent playbackIntent = new Intent(ACTION_TOGGLE_PLAYBACK);
-        playbackIntent.setPackage(getPackageName());
-        PendingIntent playbackPendingIntent = PendingIntent
-                .getBroadcast(this, 0, playbackIntent, 0);
-
         // Disconnect PendingIntent
         Intent stopIntent = new Intent(ACTION_STOP);
         stopIntent.setPackage(getPackageName());
@@ -376,13 +370,10 @@ public class VideoCastNotificationService extends Service {
                 .setContentText(castingTo)
                 .setContentIntent(contentPendingIntent)
                 .setLargeIcon(bitmap)
-                .addAction(isPlaying ? R.drawable.ic_pause_white_48dp :
-                                R.drawable.ic_play_arrow_white_48dp,
-                        getString(R.string.pause), playbackPendingIntent)
                 .addAction(R.drawable.ic_clear_white_24dp, getString(R.string.disconnect),
                         stopPendingIntent)
                 .setStyle(new Notification.MediaStyle()
-                                .setShowActionsInCompactView(new int[]{0,1}))
+                                .setShowActionsInCompactView(new int[]{0}))
                 .setOngoing(true)
                 .setShowWhen(false)
                 .setVisibility(Notification.VISIBILITY_PUBLIC)
@@ -391,28 +382,11 @@ public class VideoCastNotificationService extends Service {
     }
 
     private void addPendingIntents(RemoteViews rv, boolean isPlaying, MediaInfo info) {
-        Intent playbackIntent = new Intent(ACTION_TOGGLE_PLAYBACK);
-        playbackIntent.setPackage(getPackageName());
-        PendingIntent playbackPendingIntent = PendingIntent
-                .getBroadcast(this, 0, playbackIntent, 0);
-
         Intent stopIntent = new Intent(ACTION_STOP);
         stopIntent.setPackage(getPackageName());
         PendingIntent stopPendingIntent = PendingIntent.getBroadcast(this, 0, stopIntent, 0);
 
-        rv.setOnClickPendingIntent(R.id.playPauseView, playbackPendingIntent);
         rv.setOnClickPendingIntent(R.id.removeView, stopPendingIntent);
-
-        if (isPlaying) {
-            if (info.getStreamType() == MediaInfo.STREAM_TYPE_LIVE) {
-                rv.setImageViewResource(R.id.playPauseView, R.drawable.ic_av_stop_sm_dark);
-            } else {
-                rv.setImageViewResource(R.id.playPauseView, R.drawable.ic_av_pause_sm_dark);
-            }
-
-        } else {
-            rv.setImageViewResource(R.id.playPauseView, R.drawable.ic_av_play_sm_dark);
-        }
     }
 
     private void togglePlayback() {
