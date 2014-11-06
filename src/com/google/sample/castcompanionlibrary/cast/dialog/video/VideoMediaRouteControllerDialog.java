@@ -235,6 +235,11 @@ public class VideoMediaRouteControllerDialog extends MediaRouteControllerDialog 
                     mPausePlay.setVisibility(View.INVISIBLE);
                     setLoadingVisibility(false);
             }
+
+            // Don't ever show the play / pause button.
+            // We want the user to control the playback from within the studio,
+            // to ensure computer vision and other data collection remains in sync.
+            mPausePlay.setVisibility(View.INVISIBLE);
         }
     }
 
