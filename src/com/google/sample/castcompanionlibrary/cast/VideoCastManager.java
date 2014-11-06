@@ -1666,8 +1666,7 @@ public class VideoCastManager extends BaseCastManager
                     mRemoteControlClientCompat);
         }
         mRemoteControlClientCompat.addToMediaRouter(mMediaRouter);
-        mRemoteControlClientCompat.setTransportControlFlags(
-                RemoteControlClient.FLAG_KEY_MEDIA_PLAY_PAUSE);
+
         if (null == info) {
             mRemoteControlClientCompat.setPlaybackState(RemoteControlClient.PLAYSTATE_PAUSED);
             return;
