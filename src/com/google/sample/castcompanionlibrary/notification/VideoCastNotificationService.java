@@ -299,20 +299,13 @@ public class VideoCastNotificationService extends Service {
         Bundle mediaWrapper = Utils.fromMediaInfo(mCastManager.getRemoteMediaInformation());
         Intent contentIntent = new Intent(this, mTargetActivity);
 
+        // Flag the intent to launch the app in a new task.
+        // This will find the existing activity, so it doesn't launch a new activity.
+        contentIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
         contentIntent.putExtra("media", mediaWrapper);
 
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-
-        stackBuilder.addParentStack(mTargetActivity);
-
-        stackBuilder.addNextIntent(contentIntent);
-        if (stackBuilder.getIntentCount() > 1) {
-            stackBuilder.editIntentAt(1).putExtra("media", mediaWrapper);
-        }
-
-        // Gets a PendingIntent containing the entire back stack
-        PendingIntent resultPendingIntent =
-                stackBuilder.getPendingIntent(NOTIFICATION_ID, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent resultPendingIntent = PendingIntent.getActivity(this, 0, contentIntent, 0);
 
         MediaMetadata mm = info.getMetadata();
 
@@ -366,18 +359,16 @@ public class VideoCastNotificationService extends Service {
         Intent contentIntent = new Intent(this, mTargetActivity);
         contentIntent.putExtra("media", mediaWrapper);
 
+        // Flag the intent to launch the app in a new task.
+        // This will find the existing activity, so it doesn't launch a new activity.
+        contentIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        PendingIntent contentPendingIntent = PendingIntent.getActivity(this, 0, contentIntent, 0);
+
         // Media metadata
         MediaMetadata mm = info.getMetadata();
         String castingTo = getResources().getString(R.string.casting_to_device,
                 mCastManager.getDeviceName());
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-        stackBuilder.addParentStack(mTargetActivity);
-        stackBuilder.addNextIntent(contentIntent);
-        if (stackBuilder.getIntentCount() > 1) {
-            stackBuilder.editIntentAt(1).putExtra("media", mediaWrapper);
-        }
-        PendingIntent contentPendingIntent =
-                stackBuilder.getPendingIntent(NOTIFICATION_ID, PendingIntent.FLAG_UPDATE_CURRENT);
 
         mNotification = new Notification.Builder(this)
                 .setSmallIcon(R.drawable.ic_stat_action_notification)
